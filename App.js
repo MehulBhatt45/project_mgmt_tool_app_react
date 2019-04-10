@@ -1,0 +1,139 @@
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import Register from './screens/Register';
+import DrawerNavigator from './navigation/DrawerNavigator'
+import TaskScreen from './screens/TaskScreen';
+import AllProjectScreen from './screens/AllProjectScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import Login from './screens/login';
+import EditProfile from './screens/EditProfile';
+import Leave from './screens/Leave';
+import Routes from './screens/Routes';
+import Routes2 from './screens/Routes2';
+import Noticeboard from './screens/Noticeboard';
+import Model from './screens/Model';
+import Noticviewmore from './screens/Noticviewmore';
+import {AsyncStorage} from 'react-native';
+
+const initialState = {
+
+  password:'',
+  email:'',
+  _id:'',
+  name:'',
+  tasks:'',
+  userRole:'',
+  profilePhoto:'',
+  phone:'',
+  experience:'',
+
+  profilePhoto:'',
+  desc:'',
+  title:'',
+  clientEmail:'',
+  clientFullName:'',
+  clientContactNo:'',
+  clientDesignation:'',
+  
+};
+
+const reducer = (state=initialState,action) => {
+
+  switch (action.type) {
+    case 'LOGIN':
+
+    return { email:state.email=action.payload[0].email,
+      password: action.payload[0].password  ,
+      _id:state._id= action.payload[1],
+      name:state.name=action.payload[2],
+      tasks:state.tasks=action.payload[3],
+      userRole:state.userRole=action.payload[4],
+      profilePhoto:state.profilePhoto=action.payload[5],
+      phone:state.phone=action.payload[6],
+      experience:state.experience=action.payload[7],
+
+    }
+    case 'EDIT':
+    return{
+      email:state.email=action.payload[0].email,
+      password: action.payload[0].password  ,
+      _id:state._id= action.payload[1],
+      name:state.name=action.payload[2],
+      tasks:state.tasks=action.payload[3],
+      userRole:state.userRole=action.payload[4],
+      profilePhoto:state.profilePhoto=action.payload[5],
+      phone:state.phone=action.payload[6],
+      experience:state.experience=action.payload[7],
+       profilePhoto:state.profilePhoto=action.payload[8].profilePhoto
+    }
+
+    case 'EDITPROJECT':
+    return{
+      desc:state.desc=action.payload.desc,
+      title:state.title=action.payload.title,
+      clientEmail:state.clientEmail=action.payload.clientEmail,
+      clientFullName:state.clientFullName=action.payload.clientFullName,
+      clientContactNo:state.clientContactNo=action.payload.clientContactNo,
+      clientDesignation:state.clientDesignation=action.payload.clientDesignation
+
+    }
+    case 'REGISTER':
+    return { email:action.payload.email,
+      password: action.payload.password }             
+    }
+
+    return state
+  }
+  const store = createStore(reducer)
+
+  export default class App extends React.Component {
+
+    constructor(props){
+      super(props);
+      this.state = {
+        value: [],
+
+      };
+    }
+
+    componentDidMount= async()=>{
+      const value = await  AsyncStorage.getItem('email');
+      if (value !== null) {
+        console.log("appjs  ==",value);
+        this.setState({value: value});       
+      }  
+
+    }
+    render() {
+      if(this.state.value==false){
+        return(
+          <View style={styles.container}>
+          <Provider store={store}>
+          <Routes />
+          </Provider>
+          </View>
+          )
+      }
+      else{
+        return (
+          <View style={styles.container}>
+          <Provider store={store}>
+          <Routes2 />
+          </Provider>
+          </View>
+          );
+      }
+      // return(
+      //   <View style={styles.container}><Text>Hello World!</Text></View>
+      // );
+    }
+  }
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+  });
