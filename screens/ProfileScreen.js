@@ -69,20 +69,6 @@ class ProfileScreen extends React.Component {
         </View>
         )
 
-    // if(data.profilePhoto==""){
-    //   return(
-    //     <View>
-    //     <Image style={styles.img} source={require('../assets/avataricon.png')}/>
-    //     </View>
-    //     )
-    // }else{
-    //   console.log("my pic=======",data.profilePhoto);
-    //   return(
-    //     <View>
-    //     <Image style={styles.img} source={{uri:config.getMediaUrl()+data.profilePhoto}}/>        
-    //     </View>
-    //     )
-    // }
   }
   render() {
     console.log("yehhh",this.state.pic);

@@ -33,7 +33,36 @@ class EditProfile extends React.Component {
   }
 
   handleUploadImage = () => {
-   
+
+    // console.log("call", this.state.id);
+    // const form = new FormData();
+    // form.append({
+    //   profilePhoto: this.state.profilePhoto,
+    //   userId: this.state.id,  
+    // });
+    // console.log("FILE PATH----------",form._parts[0][0].profilePhoto);
+    // var a=form._parts[0][0].profilePhoto
+    // console.log("final function----------",a.split('/').reverse()[0].split('.').reverse()[0]);
+    // var str =a.split('/').reverse()[0].split('.').reverse()[0]); 
+    //var splitfile =  this.state.id+'/'+str
+    // console.log("split-------------",splitfile);
+
+    // axios.put(config.getBaseUrl()+'user/change-profile/'+this.state.id, {
+
+    //   method: "PUT",  
+    //   body: form,
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'multipart/form-data',
+    //   }})
+    // .then(response => {
+    //   console.log("upload succes", response);
+    // })
+    // .catch(error => {
+    //   console.log("upload error", error);
+    // });
+
+    
     RNFetchBlob.fetch('PUT', config.getBaseUrl()+"user/change-profile/"+this.state.id, {
       'Content-Type' : 'multipart/form-data',
     }, [
@@ -44,7 +73,7 @@ class EditProfile extends React.Component {
     }
     ]).then((resp) => {
       var res = JSON.parse(resp.data);
-      // console.log("Upload responcwe ===========================================>", res);
+
     }).catch((err) => {
       console.log(err);
     })
@@ -86,8 +115,7 @@ class EditProfile extends React.Component {
         </TouchableHighlight>
         </View>
         )
-    
-   
+
   }
   render() {
 
@@ -220,7 +248,7 @@ class EditProfile extends React.Component {
           console.log('ImagePicker Error: ', response.error);
         } else if (response.customButton) {
           console.log('User tapped custom button: ', response.customButton);
-        } 
+       } 
         else {
           const source = { uri: response.uri }
           console.log("file name===",response.uri);
@@ -228,7 +256,7 @@ class EditProfile extends React.Component {
           this.handleUploadImage()
         }
       });
-      
+
      
     };
   }
