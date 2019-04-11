@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "/var/www/html/Project_mgmt_tool_react_native/myAppRn/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v18/values-v18.xml",
+            "map": [
+                {
+                    "source": "/home/rao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/0a8de6dc5b054cf7f23f6a8853d75d0b/res/values-v18/values-v18.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "48",
+                        "endOffsets": "99"
+                    }
+                }
+            ]
+        }
+    ]
+}
