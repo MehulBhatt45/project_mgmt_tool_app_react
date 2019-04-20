@@ -3,11 +3,12 @@ package com.myapprn;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.RNFetchBlob.RNFetchBlobPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.imagepicker.ImagePickerPackage;
+import fr.snapp.imagebase64.RNImgToBase64Package;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -28,11 +29,12 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNFetchBlobPackage(),
             new VectorIconsPackage(),
             new LinearGradientPackage(),
             new ImagePickerPackage(),
-            new RNGestureHandlerPackage()
+            new RNImgToBase64Package(),
+            new RNGestureHandlerPackage(),
+            new RNFetchBlobPackage()
       );
     }
 

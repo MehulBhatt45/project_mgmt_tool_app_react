@@ -14,6 +14,7 @@ import EditProject from './EditProject'
 import Model from './Model'
 import MenuDrawer from '../components/MenuDrawer'
 import Noticviewmore from './Noticviewmore';
+import Notifications from './Notifications';
 
 import {createStackNavigator, createAppContainer} from 'react-navigation';
 
@@ -57,6 +58,12 @@ const MainNavigator = createStackNavigator({
 			header: null
 		}
 
+	},
+	Notifications:{
+		screen:Notifications,
+		navigationOptions:{
+			header:null
+		}
 	},
 	
 	Login: {

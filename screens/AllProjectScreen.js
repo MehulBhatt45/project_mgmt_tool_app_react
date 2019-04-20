@@ -81,7 +81,7 @@ class AllProjectScreen extends React.Component {
       <ScrollView
       stickyHeaderIndices={[0]}>
       <View >
-      <Header style={{ backgroundColor: '#4b415a',height:80}}>
+      <Header style={{ backgroundColor: '#4b415a',height:50}}>
       <MenuButton navigation={this.props.navigation} />
       <Text style={styles.text}>AllProject</Text>
       </Header>
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color:'white',
     justifyContent: 'center',
-    marginTop:40
+    marginTop:10
   },
   card:{
     marginTop:20,

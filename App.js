@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, BackHandler, Dimensions, Animated, TouchableOpacity } from 'react-native';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import Register from './screens/Register';
@@ -15,7 +15,9 @@ import Routes2 from './screens/Routes2';
 import Noticeboard from './screens/Noticeboard';
 import Model from './screens/Model';
 import Noticviewmore from './screens/Noticviewmore';
+import Notifications from './screens/Notifications';
 import {AsyncStorage} from 'react-native';
+let {width, height} = Dimensions.get('window');
 
 const initialState = {
 
@@ -88,7 +90,54 @@ const reducer = (state=initialState,action) => {
   }
   const store = createStore(reducer)
 
+   
+
   export default class App extends React.Component {
+    state = {
+        backClickCount: 0
+    };
+    
+      componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    }
+ _spring() {
+        this.setState({backClickCount: 1}, () => {
+            Animated.sequence([
+                Animated.spring(
+                    this.springValue,
+                    {
+                        toValue: -.15 * height,
+                        friction: 5,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }
+                ),
+                Animated.timing(
+                    this.springValue,
+                    {
+                        toValue: 100,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }
+                ),
+
+            ]).start(() => {
+                this.setState({backClickCount: 0});
+            });
+        });
+
+    }
+
+  handleBackButton = () => {
+        this.state.backClickCount == 1 ? BackHandler.exitApp() : this._spring();
+
+        return true;
+    };
+
 
     constructor(props){
       super(props);
@@ -96,6 +145,7 @@ const reducer = (state=initialState,action) => {
         value: [],
 
       };
+       this.springValue = new Animated.Value(100);
     }
 
     componentDidMount= async()=>{
@@ -112,6 +162,21 @@ const reducer = (state=initialState,action) => {
           <View style={styles.container}>
           <Provider store={store}>
           <Routes />
+          <View >
+               
+
+           <Animated.View style={[styles.animatedView, {transform: [{translateY: this.springValue}]}]}>
+           <Text style={styles.exitTitleText}>press back again to exit the app</Text>
+
+           <TouchableOpacity
+           activeOpacity={0.5}
+           onPress={() => BackHandler.exitApp()}
+           >
+           <Text style={styles.exitText}>Exit</Text>
+           </TouchableOpacity>
+
+           </Animated.View>
+           </View>
           </Provider>
           </View>
           )
@@ -121,6 +186,21 @@ const reducer = (state=initialState,action) => {
           <View style={styles.container}>
           <Provider store={store}>
           <Routes2 />
+          <View >
+               
+
+           <Animated.View style={[styles.animatedView, {transform: [{translateY: this.springValue}]}]}>
+           <Text style={styles.exitTitleText}>press back again to exit the app</Text>
+
+           <TouchableOpacity
+           activeOpacity={0.5}
+           onPress={() => BackHandler.exitApp()}
+           >
+           <Text style={styles.exitText}>Exit</Text>
+           </TouchableOpacity>
+
+           </Animated.View>
+           </View>
           </Provider>
           </View>
           );
@@ -132,8 +212,29 @@ const reducer = (state=initialState,action) => {
   }
 
   const styles = StyleSheet.create({
-    container: {
+     container: {
       flex: 1,
       backgroundColor: '#fff',
     },
+     animatedView: {
+        width,
+        backgroundColor: "#4b415a",
+        elevation: 2,
+        position: "absolute",
+        bottom: 0,
+        padding: 10,
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+    },
+    exitTitleText: {
+        textAlign: "center",
+        color: "#fff",
+        marginRight: 10,
+    },
+    exitText: {
+        color: "#e5933a",
+        paddingHorizontal: 10,
+        paddingVertical: 3
+    }
   });

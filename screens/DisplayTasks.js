@@ -51,7 +51,7 @@ class DisplayTasks extends React.Component {
 
           for(let j=0;j<findresponse[i].tasks.length;j++){ 
 
-            console.log("in display task------------------",findresponse[i].tasks[j].assignTo._id)
+            console.log("in display task------------------",findresponse[i].tasks[j].comment)
             if(findresponse[i].tasks[j].assignTo._id == value){
 
 
@@ -65,20 +65,22 @@ class DisplayTasks extends React.Component {
               }))  
               
               if(findresponse[i].tasks[j].status == "to do"){
+                console.log("==========")
                 this.setState(prevState =>({
                   todo: [...prevState.todo, findresponse[i].tasks[j]]
                 }))
               }else if(findresponse[i].tasks[j].status == "in progress"){
-
+                console.log("==========")
                 this.setState(prevState =>({
                   inprogress: [...prevState.inprogress, findresponse[i].tasks[j]]
                 }))
               }else if(findresponse[i].tasks[j].status == "testing"){
-
+                console.log("==========")
                 this.setState(prevState =>({
                   testing: [...prevState.testing, findresponse[i].tasks[j]]
                 }))
               }else{
+                                console.log("==========")
                 this.setState(prevState =>({
                   done: [...prevState.done, findresponse[i].tasks[j]]
                 }))
@@ -229,7 +231,7 @@ class DisplayTasks extends React.Component {
       <ScrollView
       stickyHeaderIndices={[0]}>
       <View>
-      <Header style={{ backgroundColor: '#4b415a',height:95}}> 
+      <Header style={{ backgroundColor: '#4b415a',height:50}}> 
       <Text style={styles.text}>{this.props.navigation.state.params.title}</Text>
       </Header>
       </View>
@@ -273,7 +275,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color:'white',
     justifyContent: 'center',
-    marginTop:40
+    marginTop:10
   },
   
   inputContainer: {

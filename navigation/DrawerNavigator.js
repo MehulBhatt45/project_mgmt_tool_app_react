@@ -12,7 +12,7 @@ import Leave from '../screens/Leave'
 import Noticeboard from '../screens/Noticeboard'
 import DisplayTasks from '../screens/DisplayTasks'
 import EditProject from '../screens/EditProject'
-
+import Notifications from '../screens/Notifications';
 
 
 import MenuDrawer from '../components/MenuDrawer';
@@ -39,6 +39,9 @@ const DrawerNavigator =  createDrawerNavigator(
 		},
 		EditProfile: {
 			screen: EditProfile
+		},
+		Notifications:{
+			screen:Notifications
 		},
 		Leave: {
 			screen: Leave

@@ -929,7 +929,7 @@
     },
     {
         "merged": "/var/www/html/Project_mgmt_tool_react_native/myAppRn/android/app/build/intermediates/res/merged/debug/xml_provider_paths.xml.flat",
-        "source": "/var/www/html/Project_mgmt_tool_react_native/myAppRn/node_modules/rn-fetch-blob/android/build/intermediates/packaged_res/debug/xml/provider_paths.xml"
+        "source": "/var/www/html/Project_mgmt_tool_react_native/myAppRn/node_modules/react-native-image-picker/android/build/intermediates/packaged_res/debug/xml/provider_paths.xml"
     },
     {
         "merged": "/var/www/html/Project_mgmt_tool_react_native/myAppRn/android/app/build/intermediates/res/merged/debug/layout_redbox_item_frame.xml.flat",

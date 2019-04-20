@@ -15,8 +15,10 @@ import {
 
 import { connect } from 'react-redux';
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { EventRegister } from 'react-native-event-listeners'
 const WIDTH = Dimensions.get('window').width 
 const HEIGHT = Dimensions.get('window').height 
+
 
 class MenuDrawer extends React.Component {
 	state={
@@ -24,8 +26,35 @@ class MenuDrawer extends React.Component {
 		pic:[],
 		data:[]
 	}
-	componentDidMount= async()=>{
 
+
+	componentWillMount= async()=>{
+		console.log("recall drawer");
+		const value = await AsyncStorage.getItem('currentUser');
+		if (value !== null) {
+
+			var data = JSON.parse(value);
+			this.listener = EventRegister.addEventListener('res', (data) => {
+				console.log("drawer>>>>>>>.======================",data);
+				this.setState({
+					data:[data.data]
+				})
+				this.setState({
+					pic:[data.data.profilePhoto]
+				})
+				console.log("yehh data in drawer==============",this.state.data);
+			})
+		}
+	}
+	componentWillUnmount() {
+		EventRegister.removeEventListener(this.listener)
+	}
+
+
+
+	componentDidMount= async()=>{
+		
+		
 		let value = await  AsyncStorage.getItem('email'); 
 
 		fetch('https://raoinfotech-conduct.tk:4001/user/get-user-by-id/'+value).
@@ -44,6 +73,10 @@ class MenuDrawer extends React.Component {
 		}))
 		
 		console.log("final-------",this.state.name);
+
+
+		  
+
 	})
 }
 
@@ -61,8 +94,8 @@ clearAsyncStorage = async() => {
 }
 
 profilepic(data){
-	// console.log("all data----",this.state.data);
-	console.log("hiii------",data.profilePhoto);
+	//console.log("all data----",this.state.data);
+	
 	if(data.profilePhoto==''){
 		
 		return(
@@ -77,6 +110,9 @@ profilepic(data){
 }
 
 render() {
+
+	 console.log("drawer");
+	
 	return(
 		<View style={styles.container}>
 		<ScrollView style={styles.scroller}>
@@ -122,8 +158,14 @@ render() {
 
 		
 		<View style={{flex:2,flexDirection:'row'}}>
-		<Icon name="notifications" size={25} style={{marginTop:15,color:'white',marginLeft:10}} />
+		<Icon name="today" size={25} style={{marginTop:15,color:'white',marginLeft:10}} />
 		{this.navLink('Noticeboard','Noticeboard')}
+		</View>
+
+
+		<View style={{flex:2,flexDirection:'row'}}>
+		<Icon name="notifications" size={25} style={{marginTop:15,color:'white',marginLeft:10}} />
+		{this.navLink('Notifications','Notifications')}
 		</View>
 
 		</View>

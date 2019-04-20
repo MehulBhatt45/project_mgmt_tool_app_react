@@ -8,11 +8,12 @@ import axios from 'axios'
 import Toast from 'react-native-simple-toast';
 import {AsyncStorage} from 'react-native';
 import Icon from "react-native-vector-icons/MaterialIcons";
-import RNFetchBlob from 'rn-fetch-blob'
+import RNFetchBlob from 'react-native-fetch-blob';
+import { EventRegister } from 'react-native-event-listeners'
 
 import Config from '../config'
 
- let config = new Config()
+let config = new Config()
 
 class EditProfile extends React.Component {
   constructor(props){
@@ -28,41 +29,13 @@ class EditProfile extends React.Component {
       data:[],
       id:[],
       imageURL: '',
-      profilePhotoName: ""
+      profilePhotoName: "",
+      joiningDate:''
     };
   }
 
   handleUploadImage = () => {
-
-    // console.log("call", this.state.id);
-    // const form = new FormData();
-    // form.append({
-    //   profilePhoto: this.state.profilePhoto,
-    //   userId: this.state.id,  
-    // });
-    // console.log("FILE PATH----------",form._parts[0][0].profilePhoto);
-    // var a=form._parts[0][0].profilePhoto
-    // console.log("final function----------",a.split('/').reverse()[0].split('.').reverse()[0]);
-    // var str =a.split('/').reverse()[0].split('.').reverse()[0]); 
-    //var splitfile =  this.state.id+'/'+str
-    // console.log("split-------------",splitfile);
-
-    // axios.put(config.getBaseUrl()+'user/change-profile/'+this.state.id, {
-
-    //   method: "PUT",  
-    //   body: form,
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'multipart/form-data',
-    //   }})
-    // .then(response => {
-    //   console.log("upload succes", response);
-    // })
-    // .catch(error => {
-    //   console.log("upload error", error);
-    // });
-
-    
+    console.log("edit",this.state.profilePhoto);
     RNFetchBlob.fetch('PUT', config.getBaseUrl()+"user/change-profile/"+this.state.id, {
       'Content-Type' : 'multipart/form-data',
     }, [
@@ -73,13 +46,20 @@ class EditProfile extends React.Component {
     }
     ]).then((resp) => {
       var res = JSON.parse(resp.data);
-
+      this.storeImg(res.profilePhoto);
+     
     }).catch((err) => {
       console.log(err);
     })
   };
-
-
+   storeImg = async(res)=> {
+    try {
+   
+      await AsyncStorage.setItem('Img',res);
+    } catch (error) {
+        console.log("ERRORRRRRRRRRRRRRRRRRr",error);
+    }
+  }
   componentDidMount= async()=>{
     let value = await  AsyncStorage.getItem('email'); 
     this.setState(prevState =>({
@@ -89,32 +69,35 @@ class EditProfile extends React.Component {
     then((Response)=>Response.json()).
     then((findresponse,err)=>
     {
-      console.log("In componentDidMount()", findresponse);
+    
       this.setState(prevState =>({
         data: [...prevState.data, findresponse]
       }))
+     
       this.setState({
-        profilePhoto: config.getMediaUrl()+findresponse.profilePhoto
+        profilePhoto: findresponse.profilePhoto ? config.getMediaUrl() + findresponse.profilePhoto : config.getMediaUrl() + 'avataricon.png'
       });
-      console.log("in profile =====",findresponse.profilePhoto);
+     
+
 
     })
   }
+
+
   profilePic(data){
-    console.log("yehh==========================",this.state.profilePhoto);
-    console.log("heyy==========================",data.profilePhoto);
+ 
     
-    let img1 = data.profilePhoto && data.profilePhoto!="" ? {uri: this.state.profilePhoto} : require('../assets/avataricon.png')
+    let img1 = {uri: this.state.profilePhoto}
     
-    console.log("Img1==========================",img1);
-      return(
-        <View>
-        <Image style={styles.img} source={img1} />
-        <TouchableHighlight style={[styles.buttonContainer,styles.ChoosePhotoButton]} onPress={this.pickImage}>
-        <Text style={styles.ChoosePhotoText}>Choose Photo</Text>
-        </TouchableHighlight>
-        </View>
-        )
+    
+    return(
+      <View>
+      <Image style={styles.img} source={img1} />
+      <TouchableHighlight style={[styles.buttonContainer,styles.ChoosePhotoButton]} onPress={this.pickImage}>
+      <Text style={styles.ChoosePhotoText}>Choose Photo</Text>
+      </TouchableHighlight>
+      </View>
+      )
 
   }
   render() {
@@ -128,13 +111,13 @@ class EditProfile extends React.Component {
       stickyHeaderIndices={[0]}>
       
       <View>
-      <Header style={{ backgroundColor: '#4b415a',height:80}}>
+      <Header style={{ backgroundColor: '#4b415a',height:50}}>
       <MenuButton navigation={this.props.navigation} />
       <Text style={styles.text}>Edit Profile</Text>
       </Header>
       </View>
 
-      <View>
+      <View style={{zIndex:-1}}>
 
 
       {
@@ -146,11 +129,12 @@ class EditProfile extends React.Component {
 
           <View style={styles.inputContainer}>
           <View style={{flexDirection:'column',flex:2}}>
-         <Icon name="account-circle" color="#3498DB" size={30} style={styles.inputIcon}  />
+          <Icon name="account-circle" color="#3498DB" size={30} style={styles.inputIcon}  />
           </View>
           <View style={{flexDirection:'column',flex:10}}>
           <Text style={styles.textName}>Name</Text>
           <TextInput
+          style={{marginBottom:15}}
           autoFocus={true}
           placeholder={data.name}
           placeholderTextColor = "#000000"
@@ -168,6 +152,7 @@ class EditProfile extends React.Component {
           <View style={{flexDirection:'column',flex:10}}>
           <Text style={styles.textName}>Email</Text>
           <TextInput
+          style={{marginBottom:15}}
           placeholder={data.email}
           placeholderTextColor = "#000000"
           autoCapitalize = "none"
@@ -178,11 +163,12 @@ class EditProfile extends React.Component {
 
           <View style={styles.inputContainer}>
           <View style={{flexDirection:'column',flex:2}}>
-            <Icon name="info" color="#3498DB" size={30} style={styles.inputIcon} />
+          <Icon name="info" color="#3498DB" size={30} style={styles.inputIcon} />
           </View>
           <View style={{flexDirection:'column',flex:10}}>
           <Text style={styles.textName}>About</Text>
           <TextInput
+          style={{marginBottom:15}}
           placeholder={data.userRole}
           placeholderTextColor = "#000000"
           autoCapitalize = "none"
@@ -192,11 +178,12 @@ class EditProfile extends React.Component {
 
           <View style={styles.inputContainer}>
           <View style={{flexDirection:'column',flex:2}}>
-            <Icon name="call" color="#3498DB" size={30} style={styles.inputIcon} />
+          <Icon name="call" color="#3498DB" size={30} style={styles.inputIcon} />
           </View>
           <View style={{flexDirection:'column',flex:10}}>
           <Text style={styles.textName}>Phone</Text>
           <TextInput
+          style={{marginBottom:15}}
           placeholder={data.phone}
           placeholderTextColor = "#000000"
           autoCapitalize = "none"
@@ -207,11 +194,12 @@ class EditProfile extends React.Component {
 
           <View style={styles.inputContainer}>
           <View style={{flexDirection:'column',flex:2}}>
-          <Icon name="call" color="#3498DB" size={30} style={styles.inputIcon} />
+          <Icon name="work" color="#3498DB" size={30} style={styles.inputIcon} />
           </View>
           <View style={{flexDirection:'column',flex:10}}>
           <Text style={styles.textName}>Experience</Text>
           <TextInput
+          style={{marginBottom:15}}
           placeholder={data.experience}
           placeholderTextColor = "#000000"
           autoCapitalize = "none"
@@ -219,164 +207,197 @@ class EditProfile extends React.Component {
           </View>
 
           </View>
+
+           <View style={styles.inputContainer}>
+          <View style={{flexDirection:'column',flex:2}}>
+          <Icon name="today" color="#3498DB" size={30} style={styles.inputIcon} />
+          </View>
+          <View style={{flexDirection:'column',flex:10}}>
+          <Text style={styles.textName}>Joining Date</Text>
+          <TextInput
+          style={{marginBottom:15}}
+          placeholder={data.joiningDate}
+          placeholderTextColor = "#000000"
+          autoCapitalize = "none"
+          onChangeText = {(newValue) => this.setState({joiningDate:newValue})}/>
           </View>
 
+          </View>
+
+
+
+
+          <View style={styles.inputContainer1}>
+          <TouchableHighlight style={[styles.buttonContainer, styles.savechangebtn]} onPress={() => this.props.edit(this.state.email, this.state.name, this.state.phone, this.state.userRole,this.state.id ,this.state.experience, this.state.joiningDate)}>
+          <Text style={styles.signUpText}>Save Changes</Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight style={[styles.buttonContainer, styles.canclebtn]}  onPress={() => navigate('ProfileScreen')}>
+          <Text style={styles.signUpText}>Cancle</Text>
+          </TouchableHighlight>
+          </View>
+          </View>
           )
       }
-      <View style={styles.inputContainer1}>
-      <TouchableHighlight style={[styles.buttonContainer, styles.savechangebtn]} onPress={() => this.props.edit(this.state.email, this.state.name, this.state.phone, this.state.userRole,this.state.id ,this.state.experience)}>
-      <Text style={styles.signUpText}>Save Changes</Text>
-      </TouchableHighlight>
-
-      <TouchableHighlight style={[styles.buttonContainer, styles.canclebtn]}  onPress={() => navigate('ProfileScreen')}>
-      <Text style={styles.signUpText}>Cancle</Text>
-      </TouchableHighlight>
-      </View>
 
       </View>
       </ScrollView>
       
       );
-  }
-    pickImage = async () => {
-      ImagePicker.launchImageLibrary(options, (response) => {
-        console.log('Response = ', response);
+}
+pickImage = async () => {
+  ImagePicker.launchImageLibrary(options, (response) => {
+  
 
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else if (response.customButton) {
-          console.log('User tapped custom button: ', response.customButton);
-       } 
-        else {
-          const source = { uri: response.uri }
-          console.log("file name===",response.uri);
-          this.setState({ profilePhoto: response.uri, profilePhotoName : response.fileName });
-          this.handleUploadImage()
-        }
-      });
-
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else if (response.customButton) {
+      console.log('User tapped custom button: ', response.customButton);
+    } 
+    else {
+      const source = { uri: response.uri }
      
-    };
-  }
+      this.setState({ profilePhoto: response.uri, profilePhotoName : response.fileName });
+      this.handleUploadImage()
+    }
+  });
 
-  function mapDispatchToProps(dispatch) {
-    return{
-      edit:(email,name,phone,userRole, id,experience)=>{   
-        var body={email: email , name: name,phone:phone, userRole:userRole , experience:experience }
-        console.log(body);
-        axios.put(config.getBaseUrl()+"user/update-details/"+id,body).then(res=>{
-          console.log("happyyyyy");
 
-          dispatch({ type: 'EDIT', payload:body})
-          Toast.show('Updated Profile');
+};
+}
 
-        },err=>{
-          console.log({err: err});
-        }).catch(function(error){
-          console.log(error);
-        })
-      }
+function mapDispatchToProps(dispatch, onProps) {
+  return{
+    edit:(email,name,phone,userRole, id,experience,joiningDate)=>{   
+      var body={email: email , name: name,phone:phone, userRole:userRole , experience:experience ,joiningDate:joiningDate}
+      axios.put(config.getBaseUrl()+"user/update-details/"+id,body).then(res=>{
+        _storeData(res);
+    
+       EventRegister.emit('res', res)
+     
+
+
+        dispatch({ type: 'EDIT', payload:body})
+
+        Toast.show('Updated Profile');
+
+      },err=>{
+        console.log({err: err});
+      }).catch(function(error){
+        console.log(error);
+      })
     }
   }
-  export default connect( mapDispatchToProps)(EditProfile);
-  const options = {
-    allowsEditing: true,
-    title: 'Select Avatar',
-    customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
-    storageOptions: {
-      skipBackup: true,
-      path: '',
-    },
-  };
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    text: {
-      fontSize: 20,
-      color:'white',
-      justifyContent: 'center',
-      marginTop:40
-    },
-    img: {
-      height: 150,
-      width: 150,
-      borderRadius: 100,
-      alignItems: 'center',
-    },
-    inputIcon:{
+}
+ async function _storeData(res) {
+    try {
+   
+      await AsyncStorage.setItem('currentUser',JSON.stringify(res));
+    } catch (error) {
+       
 
-      width:30,
-      height:30,
-      marginLeft:15,
-      justifyContent: 'center'
-    },
-    buttonContainer: {
-      height:40,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom:20,
-      width:120,
-      borderRadius:30,
-    },
-    ChoosePhotoText: {
-      color: 'white',
-    },
-    ChoosePhotoButton: {
-      backgroundColor: "#372e5f",
-    },
-    profilePic:{
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginTop:10
-    },
-    textName:{
-      color:'gray'
-    },
-    inputContainer: {
-      borderBottomColor: '#F5FCFF',
-      backgroundColor: '#ffffff',
-      elevation:5,
-      marginLeft:5,
-      marginRight:5,
-      borderRadius:30,
-      borderBottomWidth: 1,
-      height:55,
-      marginBottom:20,
-      flexDirection: 'row',
-      alignItems:'center'
-    },
-    inputContainer1:{
-      borderBottomColor: '#F5FCFF',
-      backgroundColor: '#ffffff',
-      marginLeft:5,
-      marginRight:5,
-      height:55,
-      marginBottom:20,
-      flexDirection: 'row',
-      alignItems:'center'
-    },
-    savechangebtn: {
-      backgroundColor: "#372e5f",
-      marginLeft:40
+    }
+  }
+export default connect( mapDispatchToProps)(EditProfile);
+const options = {
+  allowsEditing: true,
+  title: 'Select Avatar',
+  customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+  storageOptions: {
+    skipBackup: true,
+    path: '',
+  },
+};
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    fontSize: 20,
+    color:'white',
+    justifyContent: 'center',
+    marginTop:10
+  },
+  img: {
+    height: 170,
+    width: 170,
+    borderRadius: 100,
+    alignItems: 'center',
+  },
+  inputIcon:{
 
-    },
-    canclebtn:{
-      backgroundColor: "#372e5f",
-      marginLeft:20
+    width:30,
+    height:30,
+    marginLeft:15,
+    justifyContent: 'center'
+  },
+  buttonContainer: {
+    height:40,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom:20,
+    width:120,
+    borderRadius:30,
+  },
+  ChoosePhotoText: {
+    color: 'white',
+  },
+  ChoosePhotoButton: {
+    backgroundColor: "#372e5f",
+  },
+  profilePic:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop:10
+  },
+  textName:{
+    color:'gray',
+    marginTop:25
+  },
+  inputContainer: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#ffffff',
+    elevation:5,
+    marginLeft:5,
+    marginRight:5,
+    borderRadius:30,
+    borderBottomWidth: 1,
+    height:55,
+    marginBottom:20,
+    flexDirection: 'row',
+    alignItems:'center'
+  },
+  inputContainer1:{
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#ffffff',
+    marginLeft:5,
+    marginRight:5,
+    height:55,
+    marginBottom:20,
+    flexDirection: 'row',
+    alignItems:'center'
+  },
+  savechangebtn: {
+    backgroundColor: "#372e5f",
+    marginLeft:40
+
+  },
+  canclebtn:{
+    backgroundColor: "#372e5f",
+    marginLeft:20
 
 
-    },
-    signUpText: {
-      color: 'white',
-    },
-  });
+  },
+  signUpText: {
+    color: 'white',
+  },
+});
 
 
 // onPress={this.pickImage}
