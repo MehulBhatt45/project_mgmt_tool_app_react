@@ -105,7 +105,7 @@ profilepic(data){
 	else
 		
 	return(
-		    <Image style={styles.img} source={{uri:'https://raoinfotech-conduct.tk/server/uploads/'+this.state.pic}}/>
+		    <Image style={styles.img} source={{uri:config.getMediaUrl()+this.state.pic}}/>
 		)
 }
 

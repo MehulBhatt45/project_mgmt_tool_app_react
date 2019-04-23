@@ -223,10 +223,6 @@ class EditProfile extends React.Component {
           </View>
 
           </View>
-
-
-
-
           <View style={styles.inputContainer1}>
           <TouchableHighlight style={[styles.buttonContainer, styles.savechangebtn]} onPress={() => this.props.edit(this.state.email, this.state.name, this.state.phone, this.state.userRole,this.state.id ,this.state.experience, this.state.joiningDate)}>
           <Text style={styles.signUpText}>Save Changes</Text>

@@ -153,12 +153,12 @@ class DisplayTasks extends React.Component {
 
   }
   pickerFunction(){
-
+    // console.log("DATA======================================>", data);
     const {navigation} = this.props;
     if(this.state.tasksValue=="to do"){
       return(
         this.state.todo.map((data)=>
-          <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset})}>
+          <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset, projectId: data.projectId})}>
           <View style={{borderLeftColor:this.bordershow(data), borderLeftWidth: 5,marginTop:20, elevation:5,backgroundColor: 'white', marginLeft:5, marginRight:5,padding:5,color:'#372e5f'}}>
 
           <Text style={styles.texttitle}>Title:</Text>
