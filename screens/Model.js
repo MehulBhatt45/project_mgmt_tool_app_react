@@ -32,26 +32,25 @@ class Model extends React.Component {
       fileUpload:undefined,
       imageName: '',
       file: "",
-      projectId:[]
+      projectId:[],
+      name:[]
+
     }
 
   }
 
-componentWillMount() {
-        this.listener = EventRegister.addEventListener('findresponse', (comments) => {
-            console.log("drawer>>>>>>>.======================",comments);
-        this.setState({
-          comments:comments
-        })
-        })
-    }
-    
-    componentWillUnmount() {
-        EventRegister.removeEventListener(this.listener)
-    }
-    
+  componentWillMount() {
+    this.listener = EventRegister.addEventListener('resp', (resp) => {
+      console.log("hello======================",resp);
+      this.setState(prevState =>({
+        comments: [...prevState.comments, resp]
+      }))    
+    })
+  }
 
-
+  componentWillUnmount() {
+    EventRegister.removeEventListener(this.listener)
+  }
 
   componentDidMount = async()=>{
     console.log("hello componentdidmount");
@@ -64,7 +63,7 @@ componentWillMount() {
     console.log("taskid==================>",this.state.taskId);
     console.log("userId====================",this.state.userId);
     console.log("ProjectId====================",this.props.navigation.state.params.projectId);
-console.log("id================",this.props.navigation.state.params._id);
+    console.log("id================",this.props.navigation.state.params._id);
     fetch(config.getBaseUrl()+'comment/all/'+this.props.navigation.state.params._id).
     then((Response)=>Response.json()).
     then((findresponse,err)=> {     
@@ -74,8 +73,12 @@ console.log("id================",this.props.navigation.state.params._id);
         this.setState(prevState =>({
           comments: [...prevState.comments, findresponse[i]]
         }))
-      }
 
+        this.setState(prevState =>({
+          name: [...prevState.name, findresponse[i].userId.name]
+        }))
+        
+      }
 
     }).catch((error) => {
 
@@ -83,40 +86,51 @@ console.log("id================",this.props.navigation.state.params._id);
   }  
 
   profile(data){
-    if(data.profilePhoto==undefined){
+    console.log("<><><><><><>>>>>>>>>>>>>>>>>>>",this.props.navigation.state.params.profilepic);
+    let img1 = {uri: this.props.navigation.state.params.profilepic}
+    let img2 = this.props.navigation.state.params.profilepic
+    if(img2==''){
+      console.log("if call");
       return(
+        <View >
         <Image style={styles.img1} source={require('../assets/avataricon.png')}/>
+        
+        </View>
         )
     }
     else
+            console.log("else call");
       return(
-        <Image style={styles.img1} source={{uri:config.getMediaUrl()+data.profilePhoto}}/>
+        <View style={{flexDirection: 'row',}}>
+        <Image style={styles.img1} source={img1}/>
+        
+        </View>
         )
-  }
+  } 
   comment(data){
- 
+
     if(data.images == ''){
-     
+
       return(
         <View >
         <View style={{flexDirection: 'row',}}>
         {this.profile(data)}
-        <Text style={{color:'black',fontSize:15, marginLeft:10,alignItems: 'center',marginTop:10}}>{data.userId.name}</Text>
+        <Text style={{color:'black',fontSize:15, marginLeft:10,alignItems: 'center',marginTop:10}}>{this.props.navigation.state.params.assignTo}</Text>
         </View>
         <View style={{marginTop:10}}>
-        <HTMLView value={data.content} style={styles.content} />
 
+        <HTMLView value={data.content} style={styles.content} />
         </View>
         </View>
         )
     }
     else{
-    
+
       return(
         <View >
         <View style={{flexDirection: 'row',}}>
         {this.profile(data)}
-        <Text style={{color:'black',fontSize:15, marginLeft:10,alignItems: 'center',marginTop:10}}>{data.userId.name}</Text>
+          <Text style={{color:'black',fontSize:15, marginLeft:10,alignItems: 'center',marginTop:10}}>{this.props.navigation.state.params.assignTo}</Text>
         </View>
         <View style={{marginTop:10}}>
         <HTMLView value={data.content} style={styles.content} />
@@ -126,10 +140,6 @@ console.log("id================",this.props.navigation.state.params._id);
         )
     }
   }
-
-
-
-
   render() {
     console.log("call render");
 
@@ -143,9 +153,6 @@ console.log("id================",this.props.navigation.state.params._id);
       </Header>
       </View>
       <View  style={{zIndex:-1}}>
-
-
-
       <View style={styles.inputContainer}>
       <Text style={styles.textTitle}>Title:</Text>
       <Text>{this.props.navigation.state.params.title}</Text>
@@ -185,12 +192,18 @@ console.log("id================",this.props.navigation.state.params._id);
       <Text style={styles.textTitle}>Comment:</Text>
 
       <TextInput
+      ref={(input)=>{this.content=input}}
       style={styles.textarea}
       multiline = {true}
       numberOfLines = {4}
       onChangeText={(text) => this.setState({content:text})}/>
 
-      <Image style={styles.img} source={{uri:this.state.fileUpload}} />
+
+      <Image style={styles.img}
+      
+      source={{uri:this.state.fileUpload}} />
+
+
       <TouchableHighlight style={{  backgroundColor: "#372e5f",padding:10,width:'100%',marginTop:10}}
       onPress={this.pickImage}>
       <Text style={{textAlign:'center',color:'white'}}>Upload image with comment</Text>
@@ -199,7 +212,7 @@ console.log("id================",this.props.navigation.state.params._id);
 
       <View style={styles.inputContainer1}>
       <TouchableHighlight style={[styles.buttonContainer, styles.savechangebtn]}
-      onPress={() => this.props.comments(this.state.content,this.state.taskId, this.state.userId,this.state.file,this.state.imageName, this.props.navigation.state.params.projectId, this.state.comments, this.state.id)}>
+      onPress={() => this.props.comments(this.state.content,this.state.taskId, this.state.userId,this.state.file,this.state.imageName, this.props.navigation.state.params.projectId, this.state.comments, this.state.id,this.state.fileUpload, this.content.clear())}>
       <Text style={styles.signUpText}>Add Comment</Text>
       </TouchableHighlight>
 
@@ -218,8 +231,6 @@ console.log("id================",this.props.navigation.state.params._id);
           )
       }
       </View>
-
-
       </View>
       </View>
       </ScrollView>
@@ -232,7 +243,6 @@ console.log("id================",this.props.navigation.state.params._id);
       base64: false
     };
     ImagePicker.launchImageLibrary(options, (response) => {
-
 
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -247,209 +257,169 @@ console.log("id================",this.props.navigation.state.params._id);
         console.log(source);
         this.setState({ file: response.uri, fileUpload: response.uri, imageName : response.fileName });
       }
-
-    });
-
+    })
   };
-}
-function getComments(id){
-  console.log("hiiiii========",id);
-  
-  
-  fetch(config.getBaseUrl()+'comment/all/'+id).
-    then((Response)=>Response.json()).
-    then((findresponse,err)=> { 
-       let commentdata=[];
-      for(let i=0;i<findresponse.length;i++){
-
-        console.log("comment========",findresponse[i].content);
-       
-      commentdata.push(findresponse[i])
-      }
-      console.log("hiiiiii======================",this.state.comments);
-        this.setState(prevState =>({
-          comments: [...prevState.comments,...commentdata]
-        }))
-
-
-
-    }).catch((error) => {
-
-    });
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.",this.state.comments);
-        EventRegister.emit('findresponse', this.state.comments)
-        console.log("yeh=========================================",EventRegister.emit('findresponse', this.state.comments));
 }
 
 function mapDispatchToProps(onProps) {
   return{
-    comments:(content,taskId,userId,file, images, projectId, comments,id)=>{   
-      var body={content: content ,userId:userId,taskId:taskId}
+    comments:(content,taskId,userId,file, images, projectId, comments,id, name, fileupload)=>{   
+      var body={content: content ,userId:userId,taskId:taskId,name:name}
       console.log("body================",body);
-
-      // comments = [...comments]
-
       if(file==undefined){
         if(content == ''){
           alert("Please comment")
         }else{
-          axios.post(config.getBaseUrl()+'comment/add-comment/',body).then(res=>{
-            alert("Upload success!");
+          axios.post(config.getBaseUrl()+'comment/add-comment/',body).then(resp=>{
+            EventRegister.emit('resp', resp ) 
           
-            getComments(id)
-
-            // this.setState({comments:comments.push(res)}) 
-            // console.log("updated code==================================",this.state.comments);
-            // this.setState(prevState =>({
-              //   comments: [...prevState.comments, comments.push(body)]
-              // }))
-              console.log("comments====>");
-            },err=>{
-              console.log({err: err});
-            }).catch(function(error){
-              console.log(error);
-            })
-
-          }
-        }
-        else{
-          if(content== '' && file == ''){
-            alert("Please comment")
-          }
-          else{
-
-            RNFetchBlob.fetch('POST', config.getBaseUrl()+'comment/add-comment', {
-              'Content-Type' : 'multipart/form-data',
-            },
-            [
-            {
-              name : 'projectId',
-              data: projectId
-            },
-            {
-              name : 'userId',
-              data: userId
-            },
-            {
-              name : 'taskId',
-              data: taskId
-            },
-            {
-              name : 'content',
-              data: content
-            },
-            {
-              name : 'fileUpload',
-              filename :images,
-              data: RNFetchBlob.wrap(file)
-            },
-
-            ]).then((resp) => {
-
-              var res = JSON.parse(resp.data);
-              alert("Upload success!");
-               
-              getComments(id)
-              // this.setState(prevState =>({
-                //   comments: [...prevState.comments, comments.push(body)]
-                // }))
-
-                console.log("yessss",res);
-
-              })
-            .catch((err) => {
-              console.log(err);
-            })
-          }
+            alert("Upload success!");
+            console.log("comments====>",resp);
+          },err=>{
+            console.log({err: err});
+          }).catch(function(error){
+            console.log(error);
+          })
 
         }
       }
+      else{
+        if(content== '' && file == ''){
+          alert("Please comment")
+        }
+        else{
+
+          RNFetchBlob.fetch('POST', config.getBaseUrl()+'comment/add-comment', {
+            'Content-Type' : 'multipart/form-data',
+          },
+          [
+          {
+            name : 'projectId',
+            data: projectId
+          },
+          {
+            name : 'userId',
+            data: userId
+          },
+          {
+            name : 'taskId',
+            data: taskId
+          },
+          {
+            name : 'content',
+            data: content
+          },
+          {
+            name : 'fileUpload',
+            filename :images,
+            data: RNFetchBlob.wrap(file)
+          },
+
+          ]).then((res) => {
+
+            var resp = JSON.parse(res.data);
+            EventRegister.emit('resp', resp ) 
+            
+            alert("Upload Image success!");
+            // this.setState({fileUpload:[]})
+            // fileUpload:[]
+
+            console.log("yessss",resp);
+
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+        }
+
+      }
     }
   }
+}
 
-  export default connect( mapDispatchToProps)(Model)
+export default connect( mapDispatchToProps)(Model)
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-    },
-    text: {
-      fontSize: 20,
-      color:'white',
-      justifyContent: 'center',
-      marginTop:10
-    },
-    inputContainer: {
-      borderBottomColor: '#F5FCFF',
-      backgroundColor: '#ffffff',
-      borderBottomWidth: 1,
-      textAlign:'justify',
-      elevation:5,
-      marginTop:5,
-      padding:10,
-      margin:5
-    },
-    textTitle:{
-      color:'gray',
-      fontSize:20,
-      fontWeight: 'bold'
-    },
-    textarea: {
-      textAlignVertical: 'top',  
-      fontSize: 14,
-      color: '#333',
-      marginLeft:10,
-      marginRight:10,
-      borderColor: '#fff',
-      borderColor: '#000000',
-      borderRadius: 4,
-      borderWidth: 0.5,
-    },
-    inputContainer1:{
-      borderBottomColor: '#F5FCFF',
-      backgroundColor: '#ffffff',
-      marginLeft:5,
-      marginRight:5,
-      height:55,
-      marginBottom:20,
-      flexDirection: 'row',
-      alignItems:'center',
-      justifyContent: 'center',
-      marginTop:10
-    },
-    buttonContainer: {
-      height:40,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom:20,
-      width:180,
-      borderRadius:30,
-      padding:10,
-      textAlign:'center'
-    },
-    savechangebtn: {
-      backgroundColor: "#372e5f",
-      alignItems:'center',
-      justifyContent: 'center', 
-    },
-    signUpText: {
-      color: 'white',
-    },
-    img: {
-      height: 150,
-      width: '100%',
-      alignItems: 'center',
-      marginTop:10
-    },
-    img1: {
-      height: 50,
-      width: 50,
-      borderRadius: 50,
-    },
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  text: {
+    fontSize: 20,
+    color:'white',
+    justifyContent: 'center',
+    marginTop:10
+  },
+  inputContainer: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    textAlign:'justify',
+    elevation:5,
+    marginTop:5,
+    padding:10,
+    margin:5
+  },
+  textTitle:{
+    color:'gray',
+    fontSize:20,
+    fontWeight: 'bold'
+  },
+  textarea: {
+    textAlignVertical: 'top',  
+    fontSize: 14,
+    color: '#333',
+    marginLeft:10,
+    marginRight:10,
+    borderColor: '#fff',
+    borderColor: '#000000',
+    borderRadius: 4,
+    borderWidth: 0.5,
+  },
+  inputContainer1:{
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#ffffff',
+    marginLeft:5,
+    marginRight:5,
+    height:55,
+    marginBottom:20,
+    flexDirection: 'row',
+    alignItems:'center',
+    justifyContent: 'center',
+    marginTop:10
+  },
+  buttonContainer: {
+    height:40,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom:20,
+    width:180,
+    borderRadius:30,
+    padding:10,
+    textAlign:'center'
+  },
+  savechangebtn: {
+    backgroundColor: "#372e5f",
+    alignItems:'center',
+    justifyContent: 'center', 
+  },
+  signUpText: {
+    color: 'white',
+  },
+  img: {
+    height: 150,
+    width: '100%',
+    alignItems: 'center',
+    marginTop:10
+  },
+  img1: {
+    height: 50,
+    width: 50,
+    borderRadius: 50,
+  },
 
 
 
-  });
+});
 

@@ -270,6 +270,7 @@ function mapDispatchToProps(dispatch, onProps) {
       var body={email: email , name: name,phone:phone, userRole:userRole , experience:experience ,joiningDate:joiningDate}
       axios.put(config.getBaseUrl()+"user/update-details/"+id,body).then(res=>{
         _storeData(res);
+        console.log("updated");
     
        EventRegister.emit('res', res)
      

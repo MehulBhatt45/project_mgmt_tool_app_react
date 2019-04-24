@@ -25,7 +25,8 @@ class DisplayTasks extends React.Component {
       done:[],
       tasksValue:[],
       priorityset:[],
-      finalData:[]
+      finalData:[],
+      profilepic:[]
     }
   }
   _refresh() {
@@ -51,7 +52,8 @@ class DisplayTasks extends React.Component {
 
           for(let j=0;j<findresponse[i].tasks.length;j++){ 
 
-            console.log("in display task------------------",findresponse[i].tasks[j].comment)
+            
+
             if(findresponse[i].tasks[j].assignTo._id == value){
 
 
@@ -63,7 +65,11 @@ class DisplayTasks extends React.Component {
               this.setState(prevState =>({
                 finalData: [...prevState.finalData,findresponse[i].tasks[j].priority]
               }))  
+              this.setState(prevState =>({
+                profilepic: [...prevState.profilepic,findresponse[i].tasks[j].assignTo.profilePhoto]
+              })) 
               
+           // console.log("in display task------------------",findresponse[i].tasks[j].assignTo.profilePhoto)
               if(findresponse[i].tasks[j].status == "to do"){
                 console.log("==========")
                 this.setState(prevState =>({
@@ -153,12 +159,13 @@ class DisplayTasks extends React.Component {
 
   }
   pickerFunction(){
-    // console.log("DATA======================================>", data);
+    // console.log("DATA======================================>", this.state.profilepic);
     const {navigation} = this.props;
     if(this.state.tasksValue=="to do"){
+
       return(
         this.state.todo.map((data)=>
-          <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset, projectId: data.projectId})}>
+          <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset, projectId: data.projectId, profilepic:data.assignTo.profilePhoto})}>
           <View style={{borderLeftColor:this.bordershow(data), borderLeftWidth: 5,marginTop:20, elevation:5,backgroundColor: 'white', marginLeft:5, marginRight:5,padding:5,color:'#372e5f'}}>
 
           <Text style={styles.texttitle}>Title:</Text>
@@ -175,7 +182,7 @@ class DisplayTasks extends React.Component {
     else if(this.state.tasksValue=="in progress"){
       return(
         this.state.inprogress.map((data)=>
-          <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset})}>
+          <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset,projectId: data.projectId, profilepic:data.assignTo.profilePhoto})}>
           <View style={{borderLeftColor:this.bordershow(data), borderLeftWidth: 5,marginTop:20, elevation:5,backgroundColor: 'white', marginLeft:5, marginRight:5,padding:5,color:'#372e5f'}}>
 
           <Text style={styles.texttitle}>Title:</Text>
@@ -192,7 +199,7 @@ class DisplayTasks extends React.Component {
     else if(this.state.tasksValue == "testing"){
       return(
         this.state.testing.map((data)=>
-          <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset})}>
+          <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset, projectId: data.projectId , profilepic:data.assignTo.profilePhoto})}>
           <View style={{borderLeftColor:this.bordershow(data), borderLeftWidth: 5,marginTop:20, elevation:5,backgroundColor: 'white', marginLeft:5, marginRight:5,padding:5,color:'#372e5f'}}>
 
           <Text style={styles.texttitle}>Title:</Text>
@@ -209,7 +216,7 @@ class DisplayTasks extends React.Component {
     else if(this.state.tasksValue == "complete"){
       return(
         this.state.done.map((data)=>
-          <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset})}>
+          <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset, projectId: data.projectId , profilepic:data.assignTo.profilePhoto})}>
           <View style={{borderLeftColor:this.bordershow(data), borderLeftWidth: 5,marginTop:20, elevation:5,backgroundColor: 'white', marginLeft:5, marginRight:5,padding:5,color:'#372e5f'}}>
 
           <Text style={styles.texttitle}>Title:</Text>

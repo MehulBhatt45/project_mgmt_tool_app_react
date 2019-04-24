@@ -16,10 +16,12 @@ import {
 import { connect } from 'react-redux';
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { EventRegister } from 'react-native-event-listeners'
+
+import Config from '../config'
 const WIDTH = Dimensions.get('window').width 
 const HEIGHT = Dimensions.get('window').height 
 
-
+let config = new Config()
 class MenuDrawer extends React.Component {
 	state={
 		name:[],
@@ -57,7 +59,7 @@ class MenuDrawer extends React.Component {
 		
 		let value = await  AsyncStorage.getItem('email'); 
 
-		fetch('https://raoinfotech-conduct.tk:4001/user/get-user-by-id/'+value).
+		fetch(config.getBaseUrl()+'user/get-user-by-id/'+value).
 		then((Response)=>Response.json()).
 		then((findresponse,err)=>
 		{    console.log("res-----------",findresponse.name);
@@ -89,7 +91,8 @@ navLink(nav, text) {
 }
 clearAsyncStorage = async() => {
 	const value = await AsyncStorage.setItem('email', '');
-	console.log("aaa======>",value);
+	const value1 = await AsyncStorage.setItem('currentUser', '');
+	console.log("aaa======>",value,value1);
 	this.props.navigation.navigate('Login')
 }
 
