@@ -44,7 +44,10 @@ class Model extends React.Component {
       console.log("hello======================",resp);
       this.setState(prevState =>({
         comments: [...prevState.comments, resp]
-      }))    
+      }))
+      this.setState({
+        fileUpload: ""
+      })
     })
   }
 
@@ -418,8 +421,5 @@ const styles = StyleSheet.create({
     width: 50,
     borderRadius: 50,
   },
-
-
-
 });
 
