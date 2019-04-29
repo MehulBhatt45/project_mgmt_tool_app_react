@@ -102,7 +102,7 @@ class Model extends React.Component {
         )
     }
     else
-            console.log("else call");
+        console.log("else call");
       return(
         <View style={{flexDirection: 'row',}}>
         <Image style={styles.img1} source={img1}/>

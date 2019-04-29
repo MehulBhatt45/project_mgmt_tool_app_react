@@ -28,11 +28,11 @@ const DrawerConfig = {
 
 const DrawerNavigator =  createDrawerNavigator(
 	{
-		ProfileScreen: {
-			screen: ProfileScreen
-		},
 		AllProjectScreen: {
 			screen: AllProjectScreen
+		},
+		ProfileScreen: {
+			screen: ProfileScreen
 		},
 		TaskScreen: {
 			screen: TaskScreen

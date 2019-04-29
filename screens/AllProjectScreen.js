@@ -1,5 +1,5 @@
 import React from 'react';
-import { Picker,StyleSheet, Text, View, TextInput, ScrollView ,Button, TouchableHighlight, Image} from 'react-native';
+import { Picker,StyleSheet, Text, View, TextInput, ScrollView ,Button, TouchableOpacity, Image} from 'react-native';
 import { Container, Header, Content, Card, CardItem, Body } from 'native-base';
 import { connect } from 'react-redux';
 import MenuButton from '../components/MenuButton'
@@ -9,8 +9,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import PTRView from 'react-native-pull-to-refresh';
 import {AsyncStorage} from 'react-native';
 import Config from '../config'
-
- let config = new Config()
+import * as _ from 'lodash';
+let config = new Config()
 
 class AllProjectScreen extends React.Component {
 
@@ -20,7 +20,9 @@ class AllProjectScreen extends React.Component {
     this.state = {
       data : [],
       result1:[],      
-      tasks:[] 
+      tasks:[] ,
+      inprogress:[],
+      status:[]
 
     }
   }
@@ -39,20 +41,24 @@ class AllProjectScreen extends React.Component {
     {    
       for(let i=0;i<findresponse.length;i++){
         let k=findresponse[i].Teams.length
+        var taskLength = _.filter(findresponse[i].tasks, (task)=>{ return task.status == 'in progress' }).length
+        findresponse[i]['inProgressCount'] = taskLength;
         for(let j=0;j<k;j++){
           if(findresponse[i].Teams[j]._id == value){
-            
+
             this.setState(prevState =>({
               result1: [...prevState.result1, findresponse[i]]
             }))
 
-            console.log("title----",findresponse[i].title);
-          console.log(findresponse[i].title, "AVATAR=============================>",findresponse[i].avatar);
           }
+
         }
+        console.log(findresponse[i].title,"heloooooooooooo===============",findresponse[i].inProgressCount);
       }
     })
   }
+
+
   avatar(data){
     console.log("call");
     console.log(data.avatar);
@@ -60,7 +66,7 @@ class AllProjectScreen extends React.Component {
     if(data.avatar== ''){
       console.log("if---");
       return(
-           <Image style={styles.img} source={require('../assets/avataricon.png')}/>
+        <Image style={styles.img} source={require('../assets/rose1.jpeg')}/>
         )
     }
     else{
@@ -71,8 +77,9 @@ class AllProjectScreen extends React.Component {
         )
     }
   }
-  
+
   render() {
+
 
     const {navigation} = this.props;
 
@@ -92,60 +99,47 @@ class AllProjectScreen extends React.Component {
       {
         this.state.result1.map((data)=>
 
-          <View >
+          <View>
           <LinearGradient
-          colors={['#000066', '#00ffff']}
+          colors={['#fff', '#fff']}
           style={styles.card}>
+          <TouchableOpacity onPress={() => navigation.navigate('DisplayTasks',{title:data.title, _id:data._id})}>
+          <View>
 
-          <TouchableHighlight onPress={() => navigation.navigate('DisplayTasks',{title:data.title, _id:data._id})}>
-         <View>
+          <View style={{flexDirection:'row'}}>
+          <View  style={styles.imgView}>
+          {this.avatar(data)} 
+          </View>
+
+
+
+          <View style={{flexDirection:'column',flex:8}}>
+
           <View style={styles.inputContainer}>
           <View style={{flex:10,flexDirection:'column'}}>
           <Text style={[styles.textProjectName,styles.titleProject]} >{data.title}</Text>
+          <Text style={[styles.descProject]} >{data.desc}</Text>
           </View>
-          <View style={{flex:2,flexDirection:'column'}}>
-          <Icon name="keyboard-arrow-right" size={30} color="#ccc" style={{marginRight:0,marginLeft:20}}
+          <View style={{flex:2,flexDirection:'column',marginTop:50}}>
+          <Icon name="keyboard-arrow-right" size={30} color="#000000" 
           onPress={() => navigation.navigate('EditProject',{_id:data._id, title:data.title, desc:data.desc, clientEmail:data.clientEmail, clientFullName:data.clientFullName, clientContactNo:data.clientContactNo, clientDesignation:data.clientDesignation})}/>
           </View>
           </View>
-         
-          <View  style={styles.imgView}>
-          {this.avatar(data)}
+
+          </View>
+
+          </View>
+
+          <View style={{flexDirection:'row', alignItems: 'center',justifyContent: 'center', flex: 1,marginBottom:5}}>
+            <Image style={{width:25,height:25, borderRadius: 50,marginRight:5}} source={require('../assets/inprogress.png')}/>
+          <Text style={{ color:'green',fontSize:20,marginRight:5}}>In Progress:</Text>
           
+          <Text style={{fontSize:20}}>{data.inProgressCount}</Text>
+
+          </View>
           </View>
 
-          <View style={styles.inputContainer}>
-          <View style={{flex:6,flexDirection:'column'}}>
-          <View style={{flex:6,flexDirection:'column'}}>
-          <Text style={styles.textProjectName}>Tasks</Text>
-          </View>
-          <View style={{flex:6,flexDirection:'column'}}>
-          <Text style={styles.textProjectName1}>{(data.tasks).length}</Text>
-          </View>
-          </View>
-          <View style={{flex:6,flexDirection:'column'}}>
-          <View style={{flex:6,flexDirection:'column'}}>
-
-          <Text style={styles.textProjectName}>Issue</Text>
-          </View>
-          <View style={{flex:6,flexDirection:'column'}}>
-
-          <Text style={styles.textProjectName1}>{(data.IssueId).length}</Text>
-          </View>
-          </View>
-          <View style={{flex:6,flexDirection:'column'}}>
-          <View style={{flex:6,flexDirection:'column'}}>
-
-          <Text style={styles.textProjectName}>Bug</Text>
-          </View>
-          <View style={{flex:6,flexDirection:'column'}}>
-
-          <Text style={styles.textProjectName1}>{(data.BugId).length}</Text>
-          </View>
-          </View>
-          </View>
-          </View>
-           </TouchableHighlight>
+          </TouchableOpacity>
           </LinearGradient>
 
           </View>
@@ -181,6 +175,11 @@ const styles = StyleSheet.create({
     color:'white',
     marginLeft:5,
     marginRight:5, 
+    backgroundColor:'#ddd',
+    borderLeftColor:'#4b415a',
+     borderLeftWidth: 3,
+     borderBottomColor:'#ddd',
+     borderBottomWidth: 2,
   },
   inputContainer: {
     padding:10,
@@ -188,11 +187,11 @@ const styles = StyleSheet.create({
     alignItems:'center'
   },
   textProjectName:{
-    marginLeft:10,
+    // marginLeft:10,
     fontSize:20,
     color:'black',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
     fontWeight: 'bold',
   },
   textProjectName1:{
@@ -207,7 +206,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     alignItems: 'center',
     textAlign: 'center', 
-     justifyContent: 'center',
+    justifyContent: 'center',
   },
   inputContainer1: {
     backgroundColor: '#FFFFFF',
@@ -216,29 +215,29 @@ const styles = StyleSheet.create({
     alignItems:'center'
   },
   imgView: {
-    flex: 1,
-    flexDirection:'row',
-    paddingLeft: 20,
-    paddingRight: 20,
-    alignItems:'center',
-    justifyContent: 'center',
+    flexDirection:'column',
+    flex:4,
+    margin:10
+
 
   },
   img: {
-    height: 90,
-    width: 90,
-    borderRadius: 50,
-    alignItems:'center',
-    justifyContent: 'center',
-    elevation:5
+    height: 70,
+    width: 70,
+    margin:10
   },
   titleProject:{
-    textAlign:'center',
-    alignItems:'center',
-    justifyContent: 'center',
+    // textAlign:'center',
+    // alignItems:'center',
+    // justifyContent: 'center',
     fontWeight: 'bold',
-    color:'white',
-    marginLeft:20
+    color:'black',
+    // marginLeft:20
+  },
+  descProject:{
+    fontSize:16,
+    color:'black',
+
   }
 });
 

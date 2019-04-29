@@ -31,7 +31,7 @@ export default class Notifications extends React.Component {
     then((findresponse,err)=>
     { 
       for(let i=0;i<findresponse.length;i++){
-        console.log("in notification screen====",findresponse[i].type); 
+        //console.log("in notification screen====",findresponse[i].type); 
         this.setState(prevState =>({
           data: [...prevState.data, findresponse[i]]
         }))
@@ -69,7 +69,7 @@ export default class Notifications extends React.Component {
   }
   myFunction(data){
 
-    console.log("call my function");
+    
     if(data.type == 'leaveAccepted'){
        let a =data.createdAt
      let split = a.split('T')[0]
@@ -117,6 +117,29 @@ export default class Notifications extends React.Component {
 
     }
     else if(data.type == 'task'){
+     let a =data.createdAt
+     let split = a.split('T')[0]
+     console.log(split);
+
+   
+      return(
+
+        <View style={styles.taskscard}>
+        <View style={{flexDirection:'row'}}>
+         <View style={{width:20,height:20, borderRadius: 50,  borderWidth: 2, borderColor: this.bordershow(data)}} ></View>
+        <Text style={{color:'#256dde',marginLeft:5}}>Task</Text>
+        <Text style={{color:'gray',marginLeft:170}}>{split}</Text>
+        </View>
+
+        <View>
+        <HTMLView value={data.content} style={styles.content} />
+
+     
+        </View>
+        </View>
+        )
+    }
+    else if(data.type == 'comment'){
      let a =data.createdAt
      let split = a.split('T')[0]
      console.log(split);

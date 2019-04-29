@@ -76,10 +76,10 @@ class DisplayTasks extends React.Component {
                   todo: [...prevState.todo, findresponse[i].tasks[j]]
                 }))
               }else if(findresponse[i].tasks[j].status == "in progress"){
-                console.log("==========")
                 this.setState(prevState =>({
                   inprogress: [...prevState.inprogress, findresponse[i].tasks[j]]
                 }))
+                console.log("==========>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..",this.state.inprogress.length)
               }else if(findresponse[i].tasks[j].status == "testing"){
                 console.log("==========")
                 this.setState(prevState =>({
