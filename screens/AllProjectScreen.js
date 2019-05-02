@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import { Picker,StyleSheet, Text, View, TextInput, ScrollView ,Button, TouchableOpacity, Image} from 'react-native';
 import { Container, Header, Content, Card, CardItem, Body } from 'native-base';
@@ -22,7 +24,8 @@ class AllProjectScreen extends React.Component {
       result1:[],      
       tasks:[] ,
       inprogress:[],
-      status:[]
+      status:[],
+      assignTo:[]
 
     }
   }
@@ -49,29 +52,34 @@ class AllProjectScreen extends React.Component {
             this.setState(prevState =>({
               result1: [...prevState.result1, findresponse[i]]
             }))
-
+            // this.setState(prevState =>({
+            //   assignTo: [...prevState.assignTo, findresponse[i].Teams[j].name]
+            // }))
+            console.log("====ID=---=-----------------------........................",findresponse[i]._id);
           }
+          // console.log(findresponse[i].title,'members=><>>>>>>>>>>>>>>>>>>>>>>.',findresponse[i].Teams[j].name);
+           // console.log(findresponse[i].title,"team-=-=-===-=-=-=-=-=-..-.-..-.-.-.-",findresponse[i].Teams[j].name);
 
         }
-        console.log(findresponse[i].title,"heloooooooooooo===============",findresponse[i].inProgressCount);
+
       }
     })
   }
 
 
   avatar(data){
-    console.log("call");
+   // console.log("call");
     console.log(data.avatar);
 
     if(data.avatar== ''){
-      console.log("if---");
+     // console.log("if---");
       return(
         <Image style={styles.img} source={require('../assets/rose1.jpeg')}/>
         )
     }
     else{
-      console.log("else---");
-      console.log(config.getMediaUrl());
+      //console.log("else---");
+      //console.log(config.getMediaUrl());
       return(
         <Image style={styles.img} source={{uri:config.getMediaUrl()+data.avatar}}/>
         )

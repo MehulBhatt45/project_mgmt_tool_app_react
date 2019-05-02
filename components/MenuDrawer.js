@@ -161,6 +161,12 @@ render() {
 
 		
 		<View style={{flex:2,flexDirection:'row'}}>
+		<Icon name="notifications" size={25} style={{marginTop:15,color:'white',marginLeft:10}} />
+		{this.navLink('Attendence','Attendence')}
+		</View>
+
+		
+		<View style={{flex:2,flexDirection:'row'}}>
 		<Icon name="today" size={25} style={{marginTop:15,color:'white',marginLeft:10}} />
 		{this.navLink('Noticeboard','Noticeboard')}
 		</View>
@@ -170,6 +176,8 @@ render() {
 		<Icon name="notifications" size={25} style={{marginTop:15,color:'white',marginLeft:10}} />
 		{this.navLink('Notifications','Notifications')}
 		</View>
+
+
 
 		</View>
 		<View style={styles.btnlogout} >			

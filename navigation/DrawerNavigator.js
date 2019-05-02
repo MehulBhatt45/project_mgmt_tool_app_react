@@ -13,6 +13,7 @@ import Noticeboard from '../screens/Noticeboard'
 import DisplayTasks from '../screens/DisplayTasks'
 import EditProject from '../screens/EditProject'
 import Notifications from '../screens/Notifications';
+import Attendence from '../screens/Attendence'
 
 
 import MenuDrawer from '../components/MenuDrawer';
@@ -42,6 +43,9 @@ const DrawerNavigator =  createDrawerNavigator(
 		},
 		Notifications:{
 			screen:Notifications
+		},
+		Attendence:{
+			screen:Attendence
 		},
 		Leave: {
 			screen: Leave

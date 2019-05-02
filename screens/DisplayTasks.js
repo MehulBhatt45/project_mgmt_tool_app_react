@@ -7,8 +7,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import PTRView from 'react-native-pull-to-refresh';
 import {AsyncStorage} from 'react-native';
 import Config from '../config'
-
- let config = new Config()
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { EventRegister } from 'react-native-event-listeners'
+let config = new Config()
 let priority;
 let priority1='';
 
@@ -26,9 +27,65 @@ class DisplayTasks extends React.Component {
       tasksValue:[],
       priorityset:[],
       finalData:[],
-      profilepic:[]
+      profilepic:[],
+      assignToTask:[],
+      ProjectId:[]
+
     }
+     this.props.navigation.addListener(
+      'didFocus',
+      payload => {
+        this.getDate()
+      
+      });
+
   }
+
+async getDate(){
+    try {
+      const value = await AsyncStorage.getItem('updateddata');
+      if (value !== null) { 
+        var data = JSON.parse(value);
+      console.log("update ttask=======================",data);
+      if(data.status == 'in progress'){
+        this.setState({inprogress:[data]})
+        console.log("inprogress==========",this.state.inprogress);
+      }else if(data.status == 'to do'){
+        this.setState({todo:[data]})
+         console.log("inprogress==========",this.state.todo);
+      
+      }else if(data.status == 'testing'){
+        this.setState({testing:[data]})
+          console.log("inprogress==========",this.state.testing);
+      }else{
+        this.setState({done:[data]})
+             console.log("inprogress==========",this.state.done);
+      }
+
+
+      if(data.priority  == 4){
+        data.priority="High";
+        this.setState({priorityset:data.priority})
+      }else if(data.priority  == 3){
+        data.priority="Medium";
+        this.setState({priorityset:data.priority})
+      }else if(data.priority  == 2){
+        data.priority="Highest";
+        this.setState({priorityset:data.priority})
+      }else if(data.priority  == 1){
+        data.priority="low";
+        this.setState({priorityset:data.priority})
+      }
+    }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }   
+
+ 
+
+
   _refresh() {
     return new Promise((resolve) => {
       setTimeout(()=>{resolve()}, 2000)
@@ -41,100 +98,98 @@ class DisplayTasks extends React.Component {
 
     let value = await  AsyncStorage.getItem('email'); 
 
-
-    fetch(config.getBaseUrl()+'project/all').
+this.setState({ProjectId:this.props.navigation.state.params._id})
+console.log("project id",this.state.ProjectId);
+    fetch(config.getBaseUrl()+'tasks/get-task-by-id/'+this.state.ProjectId).
     then((Response)=>Response.json()).
     then((findresponse,err)=> {     
       for(let i=0;i<findresponse.length;i++){
 
-
-        if(findresponse[i]._id == this.props.navigation.state.params._id){
-
-          for(let j=0;j<findresponse[i].tasks.length;j++){ 
-
-            
-
-            if(findresponse[i].tasks[j].assignTo._id == value){
-
+            if(findresponse[i].assignTo._id == value){
 
               this.setState(prevState =>({
-                data: [...prevState.data,findresponse[i].tasks[j]]
+                data: [...prevState.data,findresponse[i].assignTo.tasks]
               }))   
 
 
               this.setState(prevState =>({
-                finalData: [...prevState.finalData,findresponse[i].tasks[j].priority]
+                finalData: [...prevState.finalData,findresponse[i].priority]
               }))  
+              console.log("finalData",findresponse[i].priority);
               this.setState(prevState =>({
-                profilepic: [...prevState.profilepic,findresponse[i].tasks[j].assignTo.profilePhoto]
+                profilepic: [...prevState.profilepic,findresponse[i].assignTo.profilePhoto]
               })) 
               
-           // console.log("in display task------------------",findresponse[i].tasks[j].assignTo.profilePhoto)
-              if(findresponse[i].tasks[j].status == "to do"){
+          
+              if(findresponse[i].status == "to do"){
                 console.log("==========")
                 this.setState(prevState =>({
-                  todo: [...prevState.todo, findresponse[i].tasks[j]]
+                  todo: [...prevState.todo, findresponse[i]]
                 }))
-              }else if(findresponse[i].tasks[j].status == "in progress"){
+              }else if(findresponse[i].status == "in progress"){
                 this.setState(prevState =>({
-                  inprogress: [...prevState.inprogress, findresponse[i].tasks[j]]
+                  inprogress: [...prevState.inprogress, findresponse[i]]
                 }))
                 console.log("==========>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..",this.state.inprogress.length)
-              }else if(findresponse[i].tasks[j].status == "testing"){
+              }else if(findresponse[i].status == "testing"){
                 console.log("==========")
                 this.setState(prevState =>({
-                  testing: [...prevState.testing, findresponse[i].tasks[j]]
+                  testing: [...prevState.testing, findresponse[i]]
                 }))
               }else{
-                                console.log("==========")
+               console.log("==========")
                 this.setState(prevState =>({
-                  done: [...prevState.done, findresponse[i].tasks[j]]
+                  done: [...prevState.done, findresponse[i]]
                 }))
               }
-            //  console.log("state==",this.state.finalData);
+              //  console.log("state==",this.state.finalData);
 
-            if(this.state.finalData==4){
+              if(this.state.finalData==4){
 
-              this.state.finalData="High";
-              
-              this.setState(prevState =>({
-                priorityset: [...prevState.priorityset, this.state.finalData]
-              }))
-              console.log("high--",this.state.priorityset);
+                this.state.finalData="High";
 
-            }else if(this.state.finalData==3){
+                this.setState(prevState =>({
+                  priorityset: [...prevState.priorityset, this.state.finalData]
+                }))
+                console.log("high--",this.state.priorityset);
 
-              this.state.finalData="Medium";
-              
-              this.setState(prevState =>({
-                priorityset: [...prevState.priorityset, this.state.finalData]
-              }))
-              console.log("Medium--",this.state.priorityset);
+              }else if(this.state.finalData==3){
 
-            }else if(this.state.finalData==2){
+                this.state.finalData="Medium";
 
-              this.state.finalData="Highest";
-            
-              this.setState(prevState =>({
-                priorityset: [...prevState.priorityset, this.state.finalData]
-              }))
-              console.log("Highest--",this.state.priorityset);
+                this.setState(prevState =>({
+                  priorityset: [...prevState.priorityset, this.state.finalData]
+                }))
+                console.log("Medium--",this.state.priorityset);
+
+              }else if(this.state.finalData==2){
+
+                this.state.finalData="Highest";
+
+                this.setState(prevState =>({
+                  priorityset: [...prevState.priorityset, this.state.finalData]
+                }))
+                console.log("Highest--",this.state.priorityset);
 
 
-            }else if(this.state.finalData==1){
-              this.state.finalData="low";
+              }else if(this.state.finalData==1){
+                this.state.finalData="low";
 
-              this.setState(prevState =>({
-                priorityset: [...prevState.priorityset, this.state.finalData]
-              }))
-              console.log("low--",this.state.priorityset);
+                this.setState(prevState =>({
+                  priorityset: [...prevState.priorityset, this.state.finalData]
+                }))
+                console.log("low--",this.state.priorityset);
 
+              }
             }
-          }
-        }
+          
+    
+
+
+
+
       }
-    }
-  })
+    })
   } 
 
 
@@ -167,8 +222,14 @@ class DisplayTasks extends React.Component {
         this.state.todo.map((data)=>
           <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset, projectId: data.projectId, profilepic:data.assignTo.profilePhoto})}>
           <View style={{borderLeftColor:this.bordershow(data), borderLeftWidth: 5,marginTop:20, elevation:5,backgroundColor: 'white', marginLeft:5, marginRight:5,padding:5,color:'#372e5f'}}>
-
+          <View style={{flexDirection:'row'}}>
+          <View style={{flexDirection:'column',flex:8}}>
           <Text style={styles.texttitle}>Title:</Text>
+          </View>
+          <View style={{flexDirection:'column',flex:2}}>
+          <Icon name="add" color="#000" size={20} style={styles.icon} onPress={() => navigation.navigate('EditTasks',{data:JSON.stringify(this.state.todo),_id:data._id,projectId: data.projectId})}/>
+          </View>
+          </View>
           <Text style={styles.textProjectName}>{data.title}</Text>
 
           <Text style={styles.texttitle}>Description:</Text>
@@ -185,7 +246,14 @@ class DisplayTasks extends React.Component {
           <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset,projectId: data.projectId, profilepic:data.assignTo.profilePhoto})}>
           <View style={{borderLeftColor:this.bordershow(data), borderLeftWidth: 5,marginTop:20, elevation:5,backgroundColor: 'white', marginLeft:5, marginRight:5,padding:5,color:'#372e5f'}}>
 
+            <View style={{flexDirection:'row'}}>
+          <View style={{flexDirection:'column',flex:8}}>
           <Text style={styles.texttitle}>Title:</Text>
+          </View>
+          <View style={{flexDirection:'column',flex:2}}>
+          <Icon name="add" color="#000" size={20} style={styles.icon} onPress={() => navigation.navigate('EditTasks',{data:JSON.stringify(this.state.inprogress),_id:data._id,projectId: data.projectId})}/>
+          </View>
+          </View>
           <Text style={styles.textProjectName}>{data.title}</Text>
 
           <Text style={styles.texttitle}>Description:</Text>
@@ -202,7 +270,14 @@ class DisplayTasks extends React.Component {
           <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset, projectId: data.projectId , profilepic:data.assignTo.profilePhoto})}>
           <View style={{borderLeftColor:this.bordershow(data), borderLeftWidth: 5,marginTop:20, elevation:5,backgroundColor: 'white', marginLeft:5, marginRight:5,padding:5,color:'#372e5f'}}>
 
+            <View style={{flexDirection:'row'}}>
+          <View style={{flexDirection:'column',flex:8}}>
           <Text style={styles.texttitle}>Title:</Text>
+          </View>
+          <View style={{flexDirection:'column',flex:2}}>
+          <Icon name="add" color="#000" size={20} style={styles.icon} onPress={() => navigation.navigate('EditTasks',{data:JSON.stringify(this.state.testing),_id:data._id,projectId: data.projectId})}/>
+          </View>
+          </View>
           <Text style={styles.textProjectName}>{data.title}</Text>
 
           <Text style={styles.texttitle}>Description:</Text>
@@ -219,7 +294,14 @@ class DisplayTasks extends React.Component {
           <TouchableHighlight onPress={() => navigation.navigate('Model',{_id:data._id,title:data.title,desc:data.desc,createdBy:data.assignTo.name,createdAt:data.createdAt,status:data.status, assignTo:data.assignTo.name, priorityset:this.state.priorityset, projectId: data.projectId , profilepic:data.assignTo.profilePhoto})}>
           <View style={{borderLeftColor:this.bordershow(data), borderLeftWidth: 5,marginTop:20, elevation:5,backgroundColor: 'white', marginLeft:5, marginRight:5,padding:5,color:'#372e5f'}}>
 
+            <View style={{flexDirection:'row'}}>
+          <View style={{flexDirection:'column',flex:8}}>
           <Text style={styles.texttitle}>Title:</Text>
+          </View>
+          <View style={{flexDirection:'column',flex:2}}>
+          <Icon name="add" color="#000" size={20} style={styles.icon} onPress={() => navigation.navigate('EditTasks',{data:JSON.stringify(this.state.done),_id:data._id,projectId: data.projectId})}/>
+          </View>
+          </View>
           <Text style={styles.textProjectName}>{data.title}</Text>
 
           <Text style={styles.texttitle}>Description:</Text>
@@ -232,9 +314,9 @@ class DisplayTasks extends React.Component {
     }
   }
   render() {
-
+    const {navigate} = this.props.navigation;
     return (
-   
+
       <ScrollView
       stickyHeaderIndices={[0]}>
       <View>
@@ -262,7 +344,7 @@ class DisplayTasks extends React.Component {
         {this.pickerFunction()}
         </View>
         </ScrollView>
-       
+
         );
   }
 }
@@ -307,5 +389,13 @@ const styles = StyleSheet.create({
     fontSize:20,
     fontWeight: 'bold',
     marginLeft:5
+  },
+  icon: {
+
+    marginLeft: 10,
+    marginTop: 10
   }
 });
+
+
+// 192.168.43.49:

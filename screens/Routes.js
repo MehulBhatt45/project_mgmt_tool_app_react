@@ -14,7 +14,8 @@ import EditProject from './EditProject'
 import Model from './Model'
 import Noticviewmore from './Noticviewmore';
 import Notifications from './Notifications';
-
+import EditTasks from './EditTasks';
+import Attendence from './Attendence';
 
 import {createStackNavigator, createAppContainer} from 'react-navigation';
 
@@ -40,6 +41,12 @@ const MainNavigator = createStackNavigator({
 			header: null
 		}
 	},
+	Attendence:{
+		screen:Attendence,
+		navigationOptions:  {
+			header: null
+		}
+	},
 	Noticviewmore:{
 		screen:Noticviewmore,
 		navigationOptions:  {
@@ -56,6 +63,12 @@ const MainNavigator = createStackNavigator({
 	},
 	Model:{
 		screen:Model,
+		navigationOptions:{
+			header:null
+		}
+	},
+	EditTasks:{
+		screen:EditTasks,
 		navigationOptions:{
 			header:null
 		}

@@ -15,6 +15,8 @@ import Model from './Model'
 import MenuDrawer from '../components/MenuDrawer'
 import Noticviewmore from './Noticviewmore';
 import Notifications from './Notifications';
+import EditTasks from './EditTasks';
+import Attendence from './Attendence';
 
 import {createStackNavigator, createAppContainer} from 'react-navigation';
 
@@ -39,6 +41,12 @@ const MainNavigator = createStackNavigator({
 			header: null
 		}
 	},
+	Attendence:{
+		screen:Attendence,
+		navigationOptions:  {
+			header: null
+		}
+	},
 	Model:{
 		screen:Model,
 		navigationOptions:{
@@ -53,7 +61,7 @@ const MainNavigator = createStackNavigator({
 		}
 	},
 	Noticviewmore:{
-			screen:Noticviewmore,
+		screen:Noticviewmore,
 		navigationOptions:  {
 			header: null
 		}
@@ -78,6 +86,12 @@ const MainNavigator = createStackNavigator({
 		navigationOptions:  {
 			title: 'Register',
 			headerLeft: null
+		}
+	},
+	EditTasks:{
+		screen:EditTasks,
+		navigationOptions:{
+			header:null
 		}
 	},
 

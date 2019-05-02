@@ -63,7 +63,7 @@ class Model extends React.Component {
     this.setState({id:this.props.navigation.state.params._id})
     this.setState({taskId:this.props.navigation.state.params._id})
     this.setState({projectId:this.props.navigation.state.params.projectId})
-    console.log("taskid==================>",this.state.taskId);
+    console.log("taskid==================>",this.props.navigation.state.params.priorityset);
     console.log("userId====================",this.state.userId);
     console.log("ProjectId====================",this.props.navigation.state.params.projectId);
     console.log("id================",this.props.navigation.state.params._id);

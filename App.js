@@ -16,7 +16,9 @@ import Noticeboard from './screens/Noticeboard';
 import Model from './screens/Model';
 import Noticviewmore from './screens/Noticviewmore';
 import Notifications from './screens/Notifications';
+import Attendence from './screens/Attendence';
 import {AsyncStorage} from 'react-native';
+import EditTasks from './screens/EditTasks';
 let {width, height} = Dimensions.get('window');
 
 const initialState = {
@@ -38,6 +40,13 @@ const initialState = {
   clientFullName:'',
   clientContactNo:'',
   clientDesignation:'',
+
+
+   title:'',
+    desc:'',
+    status:'',
+    assignTo:'',
+    priority:'',
   
 };
 
@@ -79,6 +88,16 @@ const reducer = (state=initialState,action) => {
       clientFullName:state.clientFullName=action.payload.clientFullName,
       clientContactNo:state.clientContactNo=action.payload.clientContactNo,
       clientDesignation:state.clientDesignation=action.payload.clientDesignation
+
+    }
+     case 'EDITTASKS':
+    return{
+      desc:state.desc=action.payload.desc,
+      title:state.title=action.payload.title,
+       status:state.status=action.payload.status,
+        assignTo:state.assignTo=action.payload.assignTo,
+         // priority:state.priority=action.payload.priority,
+     
 
     }
     case 'REGISTER':
