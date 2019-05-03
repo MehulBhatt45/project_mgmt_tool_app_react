@@ -29,6 +29,9 @@ const DrawerConfig = {
 
 const DrawerNavigator =  createDrawerNavigator(
 	{
+		Attendence:{
+			screen:Attendence
+		},
 		AllProjectScreen: {
 			screen: AllProjectScreen
 		},
@@ -43,9 +46,6 @@ const DrawerNavigator =  createDrawerNavigator(
 		},
 		Notifications:{
 			screen:Notifications
-		},
-		Attendence:{
-			screen:Attendence
 		},
 		Leave: {
 			screen: Leave

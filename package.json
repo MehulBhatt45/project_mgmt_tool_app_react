@@ -9,6 +9,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "material-design-icons": "^3.0.1",
+    "moment": "^2.24.0",
     "native-base": "^2.12.1",
     "react": "16.8.3",
     "react-native": "0.59.4",
@@ -43,6 +44,7 @@
     "react-native-simple-toast": "0.0.8",
     "react-native-snap-carousel": "^3.7.5",
     "react-native-tab-view": "^2.0.3",
+    "react-native-table-component": "^1.2.0",
     "react-native-textarea": "^1.0.3",
     "react-native-ui-kitten": "^3.1.2",
     "react-native-vector-icons": "^6.4.2",
